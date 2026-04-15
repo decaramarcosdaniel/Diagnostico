@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diagnóstico de Tiro</title>
+<link rel="stylesheet" href="./css/style.css">
+</head>
+
+<body>
+
+<h1>ERRORES DE DISPERSIÓN</h1>
+
+<div class="selector">
+  <button class="btn active" data-mano="diestro">DIESTRO</button>
+  <button class="btn" data-mano="zurdo">ZURDO</button>
+</div>
+
+<svg viewBox="0 0 200 200" id="ruleta"></svg>
+
+<!-- MODAL -->
+<div class="modal" id="modal">
+  <div class="modal-content">
+    <span class="cerrar">&times;</span>
+    <h2 id="titulo"></h2>
+    <div id="contenido"></div>
+  </div>
+</div>
+
+<script src="./js/script.js"></script>
+</body>
+</html>
