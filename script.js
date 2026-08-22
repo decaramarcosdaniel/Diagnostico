@@ -284,47 +284,125 @@ function getImageCoordinates(event) {
 
 function findShotAt(x, y) {
     const radius = 38;
-    let found = null, best = Infinity;
+    let found = null;
+    let best = Infinity;
+
     shots.forEach(shot => {
-        const d = Math.hypot(shot.x-x, shot.y-y);
-        if (d <= radius && d < best) { found=shot; best=d; }
+        const d = Math.hypot(shot.x - x, shot.y - y);
+        if (d <= radius && d < best) {
+            found = shot;
+            best = d;
+        }
     });
+
     return found;
 }
 
+/* ================= INTERACCIÓN TÁCTIL SEGURA =================
+   Toque corto = impacto.
+   Deslizamiento = scroll, NO impacto.
+   En edición: tocar + arrastrar = mover impacto.
+============================================================== */
+
+let pointerStart = null;
+let pointerMoved = false;
+let activePointerId = null;
+const TAP_TOLERANCE = 12;
+
 target.addEventListener("pointerdown", event => {
-    event.preventDefault();
-    const point=getImageCoordinates(event);
+    if (event.isPrimary === false) return;
+
+    activePointerId = event.pointerId;
+    pointerStart = { x: event.clientX, y: event.clientY };
+    pointerMoved = false;
 
     if (editMode) {
-        const hit=findShotAt(point.x,point.y);
-        if(hit){ selectedShotId=hit.id; draggingShotId=hit.id; target.setPointerCapture?.(event.pointerId); drawShots(); }
-        return;
-    }
+        const point = getImageCoordinates(event);
+        const hit = findShotAt(point.x, point.y);
 
-    const c=classifyPoint(point.x,point.y);
-    shots.push({id:shots.length+1,x:point.x,y:point.y,center:c.center,visualSector:c.visualSector,diagnosticSector:c.diagnosticSector});
-    updateUI();
+        if (hit) {
+            selectedShotId = hit.id;
+            draggingShotId = hit.id;
+            target.setPointerCapture?.(event.pointerId);
+            event.preventDefault();
+            drawShots();
+        }
+    }
 });
 
-target.addEventListener("pointermove",event=>{
-    if(!editMode || draggingShotId===null) return;
-    const shot=shots.find(s=>s.id===draggingShotId);
-    if(!shot) return;
-    const p=getImageCoordinates(event), c=classifyPoint(p.x,p.y);
-    Object.assign(shot,{x:p.x,y:p.y,center:c.center,visualSector:c.visualSector,diagnosticSector:c.diagnosticSector});
+target.addEventListener("pointermove", event => {
+    if (event.pointerId !== activePointerId || !pointerStart) return;
+
+    const dx = event.clientX - pointerStart.x;
+    const dy = event.clientY - pointerStart.y;
+
+    if (Math.hypot(dx, dy) > TAP_TOLERANCE) {
+        pointerMoved = true;
+    }
+
+    if (!editMode || draggingShotId === null) return;
+
+    event.preventDefault();
+
+    const shot = shots.find(item => item.id === draggingShotId);
+    if (!shot) return;
+
+    const point = getImageCoordinates(event);
+    const classification = classifyPoint(point.x, point.y);
+
+    Object.assign(shot, {
+        x: point.x,
+        y: point.y,
+        center: classification.center,
+        visualSector: classification.visualSector,
+        diagnosticSector: classification.diagnosticSector
+    });
+
     drawShots();
 });
 
-target.addEventListener("pointerup",event=>{
-    draggingShotId=null;
-    target.releasePointerCapture?.(event.pointerId);
-    updateUI();
+target.addEventListener("pointerup", event => {
+    if (event.pointerId !== activePointerId) return;
+
+    if (!editMode && !pointerMoved) {
+        const point = getImageCoordinates(event);
+        const classification = classifyPoint(point.x, point.y);
+
+        shots.push({
+            id: shots.length + 1,
+            x: point.x,
+            y: point.y,
+            center: classification.center,
+            visualSector: classification.visualSector,
+            diagnosticSector: classification.diagnosticSector
+        });
+
+        updateUI();
+    }
+
+    if (editMode && draggingShotId !== null) {
+        draggingShotId = null;
+        try { target.releasePointerCapture?.(event.pointerId); } catch (_) {}
+        updateUI();
+    }
+
+    pointerStart = null;
+    pointerMoved = false;
+    activePointerId = null;
 });
-target.addEventListener("pointercancel",event=>{
-    draggingShotId=null;
-    target.releasePointerCapture?.(event.pointerId);
+
+target.addEventListener("pointercancel", event => {
+    if (event.pointerId !== activePointerId) return;
+
+    draggingShotId = null;
+    pointerStart = null;
+    pointerMoved = false;
+    activePointerId = null;
+
+    try { target.releasePointerCapture?.(event.pointerId); } catch (_) {}
 });
+
+target.addEventListener("contextmenu", event => event.preventDefault());
 
 /* ========================= DIBUJAR IMPACTOS ========================= */
 
