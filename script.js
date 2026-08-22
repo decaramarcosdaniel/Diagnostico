@@ -177,8 +177,45 @@ function showView(view) {
     });
 }
 
-goDiagnostic.addEventListener("click", () => showView(diagnosticView));
+goDiagnostic.addEventListener("click", () => {
+    showView(diagnosticView);
+    prepareDiagnosticSetup();
+});
+
 goErrors.addEventListener("click", () => showView(errorsView));
+
+/* ================= CONFIGURACIÓN DEL DIAGNÓSTICO ================= */
+
+const diagnosticSetupPanel = document.getElementById("diagnosticSetupPanel");
+const diagnosticWorkspace = document.getElementById("diagnosticWorkspace");
+const startDiagnosticButton = document.getElementById("startDiagnosticButton");
+function prepareDiagnosticSetup() {
+    shots = [];
+    setSectorsVisible(false);
+    setEditMode(false);
+    closeModal();
+
+    diagnosticSetupPanel.hidden = false;
+    diagnosticWorkspace.hidden = true;
+
+    updateUI();
+}
+
+function startDiagnostic() {
+    shots = [];
+    setSectorsVisible(false);
+    setEditMode(false);
+    closeModal();
+
+    diagnosticSetupPanel.hidden = true;
+    diagnosticWorkspace.hidden = false;
+
+    updateUI();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+startDiagnosticButton.addEventListener("click", startDiagnostic);
+
 
 document.querySelectorAll("[data-back]").forEach(button => {
     button.addEventListener("click", () => showView(homeView));
@@ -404,6 +441,11 @@ target.addEventListener("pointercancel", event => {
 
 target.addEventListener("contextmenu", event => event.preventDefault());
 
+
+function impactColor(shot) {
+    return shot && shot.center ? "#21865a" : "#b85c00";
+}
+
 /* ========================= DIBUJAR IMPACTOS ========================= */
 
 
@@ -551,7 +593,12 @@ function drawShots() {
 
         const circle=document.createElementNS("http://www.w3.org/2000/svg","circle");
         circle.setAttribute("cx",shot.x); circle.setAttribute("cy",shot.y); circle.setAttribute("r",17);
-        circle.setAttribute("class","impact-circle"+(selectedShotId===shot.id?" is-selected":""));
+        circle.setAttribute(
+            "class",
+            "impact-circle" +
+            (shot.center ? " is-center" : "") +
+            (selectedShotId === shot.id ? " is-selected" : "")
+        );
 
         const text=document.createElementNS("http://www.w3.org/2000/svg","text");
         text.setAttribute("x",shot.x); text.setAttribute("y",shot.y); text.setAttribute("class","impact-number"); text.textContent=shot.id;
@@ -621,6 +668,7 @@ undoButton.addEventListener("click", () => {
 /* ========================= NUEVO DIAGNÓSTICO ========================= */
 
 newDiagnosticButton.addEventListener("click", () => {
+    document.body.classList.remove("show-diagnostic-actions");
 
     if (shots.length > 0) {
 
@@ -641,6 +689,9 @@ newDiagnosticButton.addEventListener("click", () => {
     closeModal();
 
     updateUI();
+
+    showView(diagnosticView);
+    prepareDiagnosticSetup();
 });
 
 
@@ -668,7 +719,10 @@ editToggleButton.addEventListener("click",()=>setEditMode(!editMode));
 
 /* ========================= DIAGNÓSTICO ========================= */
 
-diagnosticButton.addEventListener("click", generateDiagnostic);
+diagnosticButton.addEventListener("click", () => {
+    generateDiagnostic();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+});
 
 function generateDiagnostic() {
     if (!shots.length) return;
@@ -882,6 +936,35 @@ function closeModal() {
     document.body.style.overflow = "";
 }
 
+
+const newDiagnosticResultButton = document.getElementById("newDiagnosticResultButton");
+const reportResultButton = document.getElementById("reportResultButton");
+
+newDiagnosticResultButton.addEventListener("click", () => {
+    if (shots.length && !confirm("¿Desea comenzar un nuevo diagnóstico? Se eliminarán los impactos actuales.")) {
+        return;
+    }
+
+    closeModal();
+    showView(diagnosticView);
+    prepareDiagnosticSetup();
+});
+
+reportResultButton.addEventListener("click", () => {
+    if (typeof openReportDataModal === "function") {
+        openReportDataModal();
+        return;
+    }
+
+    const modal = document.getElementById("reportDataModal");
+    if (modal) {
+        modal.hidden = false;
+        modal.setAttribute("aria-hidden", "false");
+        modal.style.zIndex = "1200";
+        document.body.style.overflow = "hidden";
+    }
+});
+
 closeResult.addEventListener("click", closeModal);
 
 document.querySelector("[data-close-modal]")
@@ -895,188 +978,248 @@ document.addEventListener("keydown", event => {
 
 /* ========================= INICIO ========================= */
 
-updateUI();
-const reportDataModal=document.getElementById("reportDataModal");
-const closeReportData=document.getElementById("closeReportData");
-const reportWithoutData=document.getElementById("reportWithoutData");
-const reportWithData=document.getElementById("reportWithData");
-const reportPersonalFields=document.getElementById("reportPersonalFields");
-const reportDni=document.getElementById("reportDni");
-const reportName=document.getElementById("reportName");
-const generateReportConfirm=document.getElementById("generateReportConfirm");
-let includePersonalData=true;
 
-function openReportDataModal(){
-    includePersonalData=true;
-    reportWithData.classList.add("is-selected"); reportWithoutData.classList.remove("is-selected");
-    reportPersonalFields.hidden=false;
-    reportDataModal.hidden=false; reportDataModal.setAttribute("aria-hidden","false"); document.body.style.overflow="hidden";
+
+
+
+/* ============================================================
+   INFORME
+============================================================ */
+
+const reportDataModal = document.getElementById("reportDataModal");
+const closeReportData = document.getElementById("closeReportData");
+const reportWithoutData = document.getElementById("reportWithoutData");
+const reportWithData = document.getElementById("reportWithData");
+const reportPersonalFields = document.getElementById("reportPersonalFields");
+const generateReportConfirm = document.getElementById("generateReportConfirm");
+const reportDni = document.getElementById("reportDni");
+const reportName = document.getElementById("reportName");
+
+let reportIncludeData = true;
+
+function openReportDataModal() {
+    reportIncludeData = true;
+    reportWithData.classList.add("is-selected");
+    reportWithoutData.classList.remove("is-selected");
+    reportPersonalFields.hidden = false;
+
+    // El formulario de informe se superpone al resultado.
+    // No es necesario cerrar la ventana de diagnóstico.
+    reportDataModal.hidden = false;
+    reportDataModal.setAttribute("aria-hidden", "false");
+    document.body.style.overflow = "hidden";
+
+    requestAnimationFrame(() => {
+        reportDni?.focus();
+    });
 }
-function closeReportDataModal(){
-    reportDataModal.hidden=true; reportDataModal.setAttribute("aria-hidden","true"); document.body.style.overflow="";
+
+function closeReportDataModal() {
+    reportDataModal.hidden = true;
+    reportDataModal.setAttribute("aria-hidden", "true");
+    reportDataModal.style.zIndex = "";
+    // Si el resultado sigue abierto, mantenemos el bloqueo del scroll.
+    if (resultModal && !resultModal.hidden) {
+        document.body.style.overflow = "hidden";
+    } else {
+        document.body.style.overflow = "";
+    }
 }
-function setReportPersonalData(v){
-    includePersonalData=v; reportWithData.classList.toggle("is-selected",v); reportWithoutData.classList.toggle("is-selected",!v); reportPersonalFields.hidden=!v;
+
+reportWithData.addEventListener("click", () => {
+    reportIncludeData = true;
+    reportWithData.classList.add("is-selected");
+    reportWithoutData.classList.remove("is-selected");
+    reportPersonalFields.hidden = false;
+});
+
+reportWithoutData.addEventListener("click", () => {
+    reportIncludeData = false;
+    reportWithoutData.classList.add("is-selected");
+    reportWithData.classList.remove("is-selected");
+    reportPersonalFields.hidden = true;
+});
+
+closeReportData.addEventListener("click", closeReportDataModal);
+
+document.querySelector("[data-close-report-data]")
+    .addEventListener("click", closeReportDataModal);
+
+reportButton.addEventListener("click", () => {
+    if (!shots.length) return;
+    openReportDataModal();
+});
+
+function buildReportFigure() {
+    const targetClone = target.cloneNode(true);
+    targetClone.removeAttribute("id");
+    targetClone.style.width = "100%";
+    targetClone.style.maxWidth = "680px";
+    targetClone.style.margin = "0 auto";
+    targetClone.style.display = "block";
+
+    const svg = targetClone.querySelector("svg");
+    if (svg) {
+        svg.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+        svg.style.display = "block";
+    }
+
+    return targetClone.outerHTML;
 }
-reportButton.addEventListener("click",openReportDataModal);
-reportWithData.addEventListener("click",()=>setReportPersonalData(true));
-reportWithoutData.addEventListener("click",()=>setReportPersonalData(false));
-closeReportData.addEventListener("click",closeReportDataModal);
-document.querySelector("[data-close-report-data]").addEventListener("click",closeReportDataModal);
 
-function buildReportHtml(person){
-    const counts={1:0,2:0,3:0,4:0,5:0,6:0,7:0,8:0};
-    let center=0;
 
-    shots.forEach(s=>s.center?center++:counts[s.diagnosticSector]++);
+function buildReportAnalysis(counts, center, total) {
+    const ranking = Object.entries(counts)
+        .filter(([, count]) => count > 0)
+        .sort((a, b) => b[1] - a[1]);
 
-    const total=shots.length;
-    const ranking=Object.entries(counts)
-        .filter(([,n])=>n>0)
-        .sort((a,b)=>b[1]-a[1]);
+    if (!ranking.length) {
+        return `
+            <section class="analysis">
+                <h2>Análisis</h2>
+                <div class="analysis-summary">
+                    Todos los impactos registrados se encuentran dentro del
+                    <strong>área central</strong>. No se observa una concentración
+                    predominante en los sectores de dispersión.
+                </div>
+            </section>
+        `;
+    }
 
-    const main=ranking[0];
+    const maxCount = ranking[0][1];
+    const predominant = ranking
+        .filter(([, count]) => count === maxCount)
+        .slice(0, 3);
 
-    const esc=v=>String(v||"").replace(/[&<>"']/g,c=>({
-        "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
-    }[c]));
+    const sectorBlocks = predominant.map(([sector, count]) => {
+        const percentage = Math.round((count * 100) / total);
+        const errorData = ERRORS[sector];
 
-    const rows=[
-        `<tr><td>Centro</td><td>${center}</td><td>${Math.round(center*100/total)}%</td></tr>`,
-        ...Array.from({length:8},(_,i)=>{
-            const n=i+1,c=counts[n];
-            return `<tr><td>Sector ${n}</td><td>${c}</td><td>${Math.round(c*100/total)}%</td></tr>`;
-        })
-    ].join("");
+        return `
+            <article class="analysis-sector">
+                <div class="analysis-sector__heading">
+                    <strong>Sector ${sector}</strong>
+                    <span>${count} ${count === 1 ? "impacto" : "impactos"} · ${percentage}%</span>
+                </div>
 
-    const errors=ranking.length
-        ? ranking.slice(0,3).map(([n,c])=>`
-            <div class="err">
-                <h3>Sector ${n} — ${c} ${c===1?"disparo":"disparos"}</h3>
-                <ul>${ERRORS[n].items.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>
+                <p>${errorData.title}</p>
+
+                <ul>
+                    ${errorData.items.map(item => `<li>${item}</li>`).join("")}
+                </ul>
+            </article>
+        `;
+    }).join("");
+
+    const sectorNames = predominant
+        .map(([sector]) => `Sector ${sector}`)
+        .join(", ");
+
+    return `
+        <section class="analysis">
+            <h2>Análisis de errores predominantes</h2>
+
+            <div class="analysis-summary">
+                La mayor concentración de impactos se encuentra en
+                <strong>${sectorNames}</strong>.
+                Esta concentración representa
+                <strong>${maxCount} ${maxCount === 1 ? "impacto" : "impactos"}</strong>
+                de un total de <strong>${total}</strong>.
             </div>
-        `).join("")
-        : "<p>Todos los impactos se encuentran en el centro.</p>";
 
-    const personBlock=person
-        ? `<div class="person"><strong>${esc(person.name)||"—"}</strong><span>DNI: ${esc(person.dni)||"—"}</span></div>`
-        : "";
-
-    // Figura ORIGINAL + impactos superpuestos.
-    // La imagen está embebida en el propio JS como Data URL, por lo que
-    // el informe no depende de rutas locales ni de CORS.
-    const impactSvg=shots.map(s=>`
-        <g>
-            <circle cx="${s.x}" cy="${s.y}" r="17"
-                    fill="#b49a63" stroke="#fff" stroke-width="4"/>
-            <text x="${s.x}" y="${s.y}"
-                  text-anchor="middle"
-                  dominant-baseline="central"
-                  fill="#27241f"
-                  font-size="22"
-                  font-weight="900">${s.id}</text>
-        </g>
-    `).join("");
-
-    const figureLayer=`
-        <svg viewBox="0 0 ${FIGURE.width} ${FIGURE.height}"
-             class="target-report"
-             xmlns="http://www.w3.org/2000/svg">
-            <image href="${ORIGINAL_FIGURE_DATA_URL}"
-                   x="0" y="0"
-                   width="${FIGURE.width}"
-                   height="${FIGURE.height}"
-                   preserveAspectRatio="none"/>
-            ${impactSvg}
-        </svg>`;
-
-    return `<!doctype html>
-<html lang="es">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Informe de Diagnóstico de Tiro</title>
-<style>
-*{box-sizing:border-box}
-body{margin:0;background:#f3efe6;color:#27241f;font-family:Arial,sans-serif}
-.report{max-width:900px;margin:auto;background:#fff;min-height:100vh}
-header{padding:28px;background:#b49a63;color:#fff}
-header h1{margin:0;font-size:27px}
-header p{margin:6px 0 0;font-size:12px}
-main{padding:24px}
-.person,.principal{padding:14px;background:#f5f0e5;border-left:4px solid #b49a63;margin-bottom:18px}
-.person strong,.person span{display:block}
-.person span{margin-top:4px;font-size:12px;color:#746d60}
-.meta{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:22px}
-.box{padding:13px;border:1px solid #d7ccb4;border-radius:8px}
-.box span{display:block;font-size:10px;color:#746d60;font-weight:800}
-.box strong{display:block;margin-top:4px;font-size:16px}
-h2{font-size:17px;border-bottom:1px solid #ddd;padding-bottom:8px;margin-top:24px}
-.figure-wrap{display:flex;justify-content:center;margin:14px 0 25px;padding:15px;background:#f7f4ec;border:1px solid #d7ccb4;border-radius:10px}
-.target-report{display:block;width:min(100%,620px);height:auto}
-table{width:100%;border-collapse:collapse}
-th,td{padding:9px;border-bottom:1px solid #eee;text-align:left;font-size:12px}
-th{background:#f3efe6}
-.err{padding:12px;background:#f7f7f6;border-left:4px solid #b49a63;margin:9px 0}
-.err h3{font-size:14px;margin:0 0 6px}
-.err li{font-size:12px;line-height:1.4;margin-bottom:4px}
-.print{position:fixed;right:18px;bottom:18px;padding:12px 18px;background:#27241f;color:#fff;border:0;border-radius:8px;font-weight:bold}
-@media(max-width:520px){main{padding:15px}.meta{grid-template-columns:1fr}}
-@media print{body{background:#fff}.report{max-width:none}.print{display:none}.figure-wrap{break-inside:avoid}}
-</style>
-</head>
-<body>
-<div class="report">
-<header>
-<h1>DIAGNÓSTICO DE TIRO</h1>
-<p>Informe de distribución de impactos</p>
-</header>
-<main>
-${personBlock}
-
-<div class="meta">
-<div class="box"><span>FECHA</span><strong>${new Date().toLocaleString("es-AR")}</strong></div>
-<div class="box"><span>TIPO DE TIRADOR</span><strong>${hand.toUpperCase()}</strong></div>
-<div class="box"><span>DISPAROS</span><strong>${total}</strong></div>
-<div class="box"><span>CENTRO</span><strong>${center} (${Math.round(center*100/total)}%)</strong></div>
-</div>
-
-<h2>Figura de impactos</h2>
-<div class="figure-wrap">${figureLayer}</div>
-
-<h2>Distribución de impactos</h2>
-<table>
-<thead><tr><th>Zona</th><th>Impactos</th><th>Porcentaje</th></tr></thead>
-<tbody>${rows}</tbody>
-</table>
-
-<div class="principal">
-<strong>Sector predominante: ${main?`Sector ${main[0]}`:"Centro"}</strong>
-</div>
-
-<h2>Posibles errores asociados</h2>
-${errors}
-
-<h2>Observaciones</h2>
-<p>Informe generado como herramienta de apoyo para la observación y diagnóstico de la distribución de impactos.</p>
-</main>
-</div>
-<button class="print" onclick="window.print()">Imprimir / Guardar PDF</button>
-</body>
-</html>`;
+            ${sectorBlocks}
+        </section>
+    `;
 }
 
-generateReportConfirm.addEventListener("click",()=>{
-    const person=includePersonalData?{dni:reportDni.value.trim(),name:reportName.value.trim()}:null;
-    closeReportDataModal();
+generateReportConfirm.addEventListener("click", () => {
+    const dni = reportIncludeData ? reportDni.value.trim() : "";
+    const name = reportIncludeData ? reportName.value.trim() : "";
 
-    const w=window.open("","_blank");
-    if(!w){
-        alert("El navegador bloqueó la ventana del informe. Habilite las ventanas emergentes.");
+    const personal = reportIncludeData
+        ? `<div class="personal"><strong>Tirador:</strong> ${escapeHtml(name || "Sin especificar")} &nbsp; <strong>DNI:</strong> ${escapeHtml(dni || "Sin especificar")}</div>`
+        : `<div class="personal"><strong>Datos del tirador:</strong> No incorporados</div>`;
+
+    const counts = {1:0,2:0,3:0,4:0,5:0,6:0,7:0,8:0};
+    let center = 0;
+
+    shots.forEach(shot => {
+        if (shot.center) center++;
+        else if (counts[shot.diagnosticSector] !== undefined) counts[shot.diagnosticSector]++;
+    });
+
+    const rows = Object.entries(counts)
+        .filter(([, count]) => count > 0)
+        .map(([sector, count]) => `<tr><td>Sector ${sector}</td><td>${count}</td></tr>`)
+        .join("");
+
+    const reportWindow = window.open("", "_blank", "width=900,height=900");
+    if (!reportWindow) {
+        alert("El navegador bloqueó la ventana del informe. Permita ventanas emergentes para este sitio.");
         return;
     }
 
-    w.document.open();
-    w.document.write(buildReportHtml(person));
-    w.document.close();
+    reportWindow.document.write(`
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Diagnóstico de Tiro</title>
+<style>
+body{font-family:Arial,sans-serif;margin:0;padding:28px;color:#222;background:#fff}
+h1{font-size:28px;margin:0 0 4px}
+h2{font-size:17px;margin:24px 0 8px}
+.subtitle{color:#8b7445;margin-bottom:18px}
+.personal{padding:10px 12px;background:#f4efe3;border-radius:7px;margin:12px 0}
+.figure{margin:18px auto;max-width:680px}
+.figure .target{position:relative;width:100%;overflow:hidden}
+.figure .target__image{display:block;width:100%;height:auto}
+.figure .target__overlay{position:absolute;inset:0;width:100%;height:100%}
+table{border-collapse:collapse;width:100%;max-width:520px}
+td{padding:8px;border-bottom:1px solid #ddd}
+.analysis{margin-top:26px;max-width:760px}
+.analysis h2{margin-bottom:10px}
+.analysis-summary{padding:12px 14px;background:#f4efe3;border-left:4px solid #b99b5f;border-radius:7px;line-height:1.5}
+.analysis-sector{margin-top:12px;padding:14px;border:1px solid #ddd;border-radius:8px;background:#fff}
+.analysis-sector__heading{display:flex;justify-content:space-between;gap:12px;margin-bottom:7px}
+.analysis-sector__heading span{color:#777;font-size:13px}
+.analysis-sector p{margin:5px 0 7px;color:#555;line-height:1.45}
+.analysis-sector ul{margin:7px 0 0;padding-left:20px}
+.analysis-sector li{margin:5px 0;line-height:1.45}
+button{padding:10px 18px;border:0;border-radius:6px;background:#25231f;color:white}
+@media print{button{display:none}.analysis-sector{break-inside:avoid}}
+</style>
+</head>
+<body>
+<h1>DIAGNÓSTICO DE TIRO</h1>
+<div class="subtitle">Informe de distribución de impactos</div>
+${personal}
+<p><strong>Tipo de tirador:</strong> ${escapeHtml(hand.toUpperCase())}</p>
+<p><strong>Total de disparos:</strong> ${shots.length}</p>
+<div class="figure">${buildReportFigure()}</div>
+<h2>Distribución</h2>
+<table>
+<tr><td>Centro</td><td>${center}</td></tr>
+${rows || "<tr><td colspan='2'>No hay impactos fuera del centro.</td></tr>"}
+</table>
+
+${buildReportAnalysis(counts, center, shots.length)}
+
+<br>
+<button onclick="window.print()">Imprimir / Guardar PDF</button>
+</body>
+</html>`);
+
+    reportWindow.document.close();
+    closeReportDataModal();
 });
+
+function escapeHtml(value) {
+    return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+}
+

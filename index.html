@@ -9,7 +9,6 @@
 </head>
 
 <body>
-
 <main class="app">
 
     <header class="app-header">
@@ -91,8 +90,7 @@
                 <h2>Diagnóstico de tiro</h2>
             </div>
         </div>
-
-        <section class="panel">
+<section id="diagnosticSetupPanel" class="diagnostic-setup-panel">
             <span class="panel-label">TIPO DE TIRADOR</span>
 
             <div class="hand-selector" role="group" aria-label="Tipo de tirador">
@@ -101,7 +99,19 @@
                 <button class="hand-button"
                         data-hand="zurdo" type="button">ZURDO</button>
             </div>
+
+            <p class="setup-description">
+                Seleccione el tipo de tirador y luego inicie el diagnóstico.
+            </p>
+
+            <button id="startDiagnosticButton"
+                    class="start-diagnostic-button"
+                    type="button">
+                INICIAR DIAGNÓSTICO
+            </button>
         </section>
+
+        <section id="diagnosticWorkspace" hidden>
 
         <section class="status-grid">
             <div class="status-card">
@@ -126,7 +136,7 @@
         <section class="target-wrap">
             <div id="target" class="target" aria-label="Figura para registrar disparos">
                 <img
-                    src="assets/figura-tiro.jpeg"
+                    src="figura-tiro.jpeg"
                     class="target__image"
                     alt="Figura para diagnóstico de tiro"
                     draggable="false">
@@ -186,13 +196,14 @@
                 ⤓ Generar informe
             </button>
         </section>
-
-        <section id="editPanel" class="edit-panel" hidden>
+<section id="editPanel" class="edit-panel" hidden>
             <div>
                 <strong>Modo edición</strong>
                 <small>Active la edición para mover un impacto a su ubicación correcta.</small>
             </div>
             <button id="editToggleButton" type="button">Editar impactos</button>
+        </section>
+
         </section>
 
     </section>
@@ -277,6 +288,20 @@
             <div class="result-block">
                 <h3>Resumen</h3>
                 <div id="diagnosticConclusion" class="conclusion"></div>
+            </div>
+
+            <div id="diagnosticResultActions" class="diagnostic-result-actions">
+                <button id="newDiagnosticResultButton"
+                        type="button"
+                        class="result-action result-action--new">
+                    ↻ NUEVO DIAGNÓSTICO
+                </button>
+
+                <button id="reportResultButton"
+                        type="button"
+                        class="result-action result-action--report">
+                    ⤓ GENERAR INFORME
+                </button>
             </div>
 
         </div>

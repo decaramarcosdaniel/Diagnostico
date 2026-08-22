@@ -985,3 +985,698 @@ button {
 .target.is-editing {
     touch-action: none;
 }
+
+/* ================= PANTALLA INICIAL ================= */
+
+.setup-screen {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: grid;
+    place-items: center;
+    padding: 20px;
+    background: #f3efe6;
+}
+
+.setup-screen.is-hidden {
+    display: none;
+}
+
+.setup-card {
+    width: min(100%, 460px);
+    padding: 26px 20px 22px;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    box-shadow: 0 12px 35px rgba(39,36,31,.08);
+    text-align: center;
+}
+
+.setup-brand {
+    color: var(--primary);
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: 1.8px;
+    margin-bottom: 14px;
+}
+
+.setup-card h1 {
+    margin: 0;
+    color: var(--text);
+    font-size: 25px;
+}
+
+.setup-card > p {
+    margin: 8px 0 22px;
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.shooter-options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 16px;
+}
+
+.shooter-option {
+    min-height: 82px;
+    padding: 12px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: #fff;
+    color: var(--text);
+    text-align: left;
+    cursor: pointer;
+}
+
+.shooter-option.is-selected {
+    border-color: var(--primary);
+    background: #f5f0e5;
+    box-shadow: inset 0 0 0 1px var(--primary);
+}
+
+.shooter-option__title {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 13px;
+    font-weight: 900;
+}
+
+.shooter-option__text {
+    display: block;
+    color: var(--muted);
+    font-size: 10px;
+}
+
+.start-diagnostic-button {
+    width: 100%;
+    min-height: 50px;
+    border: 1px solid var(--primary);
+    border-radius: 10px;
+    background: var(--primary);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 900;
+    letter-spacing: .3px;
+    cursor: pointer;
+}
+
+body.diagnostic-not-started .app-container {
+    visibility: hidden;
+}
+
+@media (min-width: 600px) {
+    .setup-card {
+        padding: 32px 30px 28px;
+    }
+}
+
+/* En la pantalla de carga de impactos no se muestran estas acciones.
+   Se habilitan desde la pantalla de diagnóstico mediante la sección/modal. */
+body:not(.show-diagnostic-actions) #newDiagnosticButton,
+body:not(.show-diagnostic-actions) #reportButton {
+    display: none;
+}
+
+body.show-diagnostic-actions #newDiagnosticButton,
+body.show-diagnostic-actions #reportButton {
+    display: block;
+}
+
+/* ================= NAVEGACIÓN PRINCIPAL V12 ================= */
+
+body {
+    background: #f3efe6;
+}
+
+.home-screen,
+.errors-screen {
+    min-height: 100vh;
+    padding: 22px 16px 30px;
+}
+
+.home-screen {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.home-header {
+    margin-bottom: 22px;
+}
+
+.eyebrow {
+    display: block;
+    margin-bottom: 7px;
+    color: var(--primary);
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: 1.6px;
+}
+
+.home-header h1,
+.page-header h1 {
+    margin: 0;
+    color: var(--text);
+    font-size: 26px;
+    line-height: 1.1;
+}
+
+.home-header p,
+.page-header p {
+    margin: 8px 0 0;
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.home-cards {
+    display: grid;
+    gap: 12px;
+}
+
+.home-card {
+    min-height: 155px;
+    padding: 22px;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    background: #fff;
+    color: var(--text);
+    text-align: left;
+    box-shadow: 0 8px 25px rgba(39,36,31,.05);
+    cursor: pointer;
+}
+
+.home-card:active {
+    transform: scale(.99);
+}
+
+.home-card__icon {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    margin-bottom: 18px;
+    border-radius: 10px;
+    background: #f5f0e5;
+    color: var(--primary);
+    font-size: 25px;
+    font-weight: 900;
+}
+
+.home-card strong {
+    display: block;
+    font-size: 15px;
+    letter-spacing: .3px;
+}
+
+.home-card small {
+    display: block;
+    margin-top: 7px;
+    max-width: 340px;
+    color: var(--muted);
+    font-size: 11px;
+    line-height: 1.45;
+}
+
+.page-header {
+    max-width: 900px;
+    margin: 0 auto 18px;
+}
+
+.back-button {
+    min-height: 38px;
+    margin-bottom: 18px;
+    padding: 0 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: #fff;
+    color: var(--text);
+    font-size: 11px;
+    font-weight: 800;
+}
+
+.errors-notice {
+    max-width: 900px;
+    margin: 0 auto 15px;
+    padding: 13px 14px;
+    border-left: 4px solid var(--primary);
+    border-radius: 8px;
+    background: #f5f0e5;
+}
+
+.errors-notice strong,
+.errors-notice span {
+    display: block;
+}
+
+.errors-notice strong {
+    font-size: 12px;
+}
+
+.errors-notice span {
+    margin-top: 4px;
+    color: var(--muted);
+    font-size: 11px;
+    line-height: 1.45;
+}
+
+.errors-list {
+    display: grid;
+    gap: 10px;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.error-sector-card {
+    padding: 15px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: #fff;
+}
+
+.error-sector-card h2 {
+    margin: 0 0 9px;
+    font-size: 14px;
+}
+
+.error-sector-card ul {
+    margin: 0;
+    padding-left: 19px;
+}
+
+.error-sector-card li {
+    margin-bottom: 6px;
+    color: var(--muted);
+    font-size: 11px;
+    line-height: 1.45;
+}
+
+@media (min-width: 650px) {
+    .home-screen,
+    .errors-screen {
+        padding: 45px 24px;
+    }
+
+    .home-cards {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .home-card {
+        min-height: 190px;
+    }
+}
+
+/* La navegación v12 controla las pantallas principales. */
+body.diagnostic-not-started .app-container {
+    visibility: visible;
+}
+
+/* ================= FLUJO V12/V13 ================= */
+
+.diagnostic-setup-panel {
+    max-width: 520px;
+    margin: 0 auto 18px;
+    padding: 22px 18px;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    box-shadow: 0 8px 25px rgba(39,36,31,.05);
+}
+
+.diagnostic-setup-panel .panel-label {
+    display: block;
+    margin-bottom: 10px;
+    text-align: center;
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: 1.1px;
+    color: var(--primary);
+}
+
+.diagnostic-setup-panel .hand-selector {
+    max-width: 430px;
+    margin: 0 auto;
+}
+
+.setup-description {
+    margin: 12px 0 16px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 11px;
+    line-height: 1.45;
+}
+
+.start-diagnostic-button {
+    width: 100%;
+    min-height: 48px;
+    border: 0;
+    border-radius: 9px;
+    background: var(--text);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: .4px;
+}
+
+#diagnosticWorkspace[hidden] {
+    display: none !important;
+}
+
+#diagnosticWorkspace .control-button--new,
+#diagnosticWorkspace .control-button--report,
+#diagnosticWorkspace #editPanel {
+    display: none !important;
+}
+
+#diagnosticWorkspace .controls {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+}
+
+#diagnosticWorkspace .control-button--primary {
+    order: 1;
+}
+
+#diagnosticWorkspace .control-button--danger {
+    order: 2;
+}
+
+#diagnosticWorkspace .control-button--secondary {
+    order: 3;
+}
+
+#diagnosticWorkspace .sector-toggle-wrap {
+    margin-top: 10px;
+}
+
+.diagnostic-result-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 9px;
+    margin-top: 14px;
+}
+
+@media (min-width: 650px) {
+    .diagnostic-result-actions {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+/* V14 — configuración inicial: un solo selector */
+#diagnosticView > .panel {
+    display: none !important;
+}
+
+#diagnosticSetupPanel[hidden] {
+    display: none !important;
+}
+
+#diagnosticSetupPanel {
+    display: block;
+    margin-top: 8px;
+}
+
+@media (max-width: 649px) {
+    .diagnostic-setup-panel {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 18px 14px;
+    }
+
+    .diagnostic-setup-panel .hand-selector {
+        width: 100%;
+    }
+
+    .start-diagnostic-button {
+        min-height: 50px;
+    }
+}
+
+/* ============================================================
+   V14 — AJUSTE VISUAL
+   Compacto / Mobile First / Arena institucional
+============================================================ */
+
+/* Reduce excessive vertical whitespace */
+.app {
+    max-width: 980px;
+    margin: 0 auto;
+}
+
+.app-header {
+    padding: 18px 16px 10px;
+}
+
+.app-header h1 {
+    margin-bottom: 4px;
+}
+
+.app-header p {
+    margin-top: 2px;
+}
+
+.view {
+    padding-top: 8px;
+    padding-bottom: 20px;
+}
+
+.panel {
+    margin-bottom: 10px;
+}
+
+.status-grid {
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.status-card {
+    padding: 10px 12px;
+}
+
+.target-instruction {
+    margin: 8px 0;
+    padding: 8px 10px;
+}
+
+.target-wrap {
+    margin: 8px auto;
+    padding: 6px;
+}
+
+.controls {
+    gap: 7px;
+    margin-top: 9px;
+}
+
+.control-button {
+    min-height: 42px;
+    padding: 8px 10px;
+    font-size: 11px;
+}
+
+/* LIMPIAR: visually distinct */
+.control-button--danger,
+#clearButton {
+    background: #b94a48 !important;
+    border-color: #b94a48 !important;
+    color: #fff !important;
+}
+
+/* Result actions */
+.diagnostic-result-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin: 10px 0 0;
+}
+
+.diagnostic-result-actions .control-button--new {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: #fff;
+}
+
+.diagnostic-result-actions .control-button--report {
+    background: var(--text);
+    border-color: var(--text);
+    color: #fff;
+}
+
+.diagnostic-result-actions[hidden] {
+    display: none !important;
+}
+
+/* Center impacts */
+.impact-marker.is-center,
+.impact-marker.center,
+.shot-marker.is-center,
+.shot-marker.center {
+    background: #21865a !important;
+    border-color: #176c47 !important;
+    color: #fff !important;
+}
+
+/* If impact rendering uses inline SVG/canvas-like elements,
+   these classes allow the JS/CSS marker to identify center shots. */
+.impact-marker[data-center="true"],
+.shot-marker[data-center="true"] {
+    background: #21865a !important;
+    border-color: #176c47 !important;
+    color: #fff !important;
+}
+
+@media (max-width: 649px) {
+    .app-header h1 {
+        font-size: 25px;
+    }
+
+    .status-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .diagnostic-result-actions {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .diagnostic-result-actions .control-button {
+        min-height: 44px;
+    }
+}
+
+@media (min-width: 650px) {
+    .app-header {
+        padding-top: 22px;
+    }
+
+    .view {
+        padding-top: 10px;
+    }
+}
+
+/* V15 — impactos dentro del centro */
+.impact-circle.is-center {
+    fill: #21865a !important;
+    stroke: #ffffff !important;
+}
+
+.impact-circle.is-center + .impact-number {
+    fill: #ffffff !important;
+}
+
+/* ============================================================
+   V16 — ACCIONES DEL RESULTADO
+============================================================ */
+
+.diagnostic-result-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
+    margin-top: 16px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+}
+
+.result-action {
+    width: 100%;
+    min-height: 46px;
+    border: 1px solid transparent;
+    border-radius: 9px;
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: .35px;
+    cursor: pointer;
+}
+
+.result-action--new {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: #fff;
+}
+
+.result-action--report {
+    background: var(--text);
+    border-color: var(--text);
+    color: #fff;
+}
+
+@media (min-width: 650px) {
+    .diagnostic-result-actions {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+/* ============================================================
+   V17 — ACCIONES DE RESULTADO MÁS COMPACTAS
+============================================================ */
+
+.diagnostic-result-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin: 12px 15px 4px;
+    padding-top: 10px;
+    border-top: 1px solid var(--border);
+}
+
+.result-action {
+    width: auto !important;
+    min-width: 150px;
+    min-height: 38px !important;
+    padding: 7px 13px !important;
+    border-radius: 7px !important;
+    font-size: 10px !important;
+    line-height: 1;
+}
+
+.result-action--new {
+    background: var(--primary);
+    border-color: var(--primary);
+}
+
+.result-action--report {
+    background: var(--text);
+    border-color: var(--text);
+}
+
+@media (max-width: 520px) {
+    .diagnostic-result-actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 7px;
+        margin: 10px 12px 2px;
+    }
+
+    .result-action {
+        min-width: 0;
+        min-height: 38px !important;
+        padding: 6px 7px !important;
+        font-size: 9px !important;
+    }
+}
+
+/* ============================================================
+   V17 — EL FORMULARIO DE INFORME DEBE QUEDAR SOBRE EL RESULTADO
+============================================================ */
+
+#resultModal {
+    z-index: 1000;
+}
+
+#reportDataModal {
+    z-index: 1200 !important;
+}
+
+#reportDataModal .modal__backdrop {
+    background: rgba(12, 18, 24, .68);
+    z-index: 0;
+}
+
+#reportDataModal .modal__sheet {
+    z-index: 1;
+}
