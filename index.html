@@ -1,32 +1,228 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Diagnóstico de Tiro</title>
-<link rel="stylesheet" href="./css/style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#202a34">
+    <title>Diagnóstico de Tiro</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
 
-<h1>ERRORES DE DISPERSIÓN</h1>
+<main class="app">
 
-<div class="selector">
-  <button class="btn active" data-mano="diestro">DIESTRO</button>
-  <button class="btn" data-mano="zurdo">ZURDO</button>
+    <header class="app-header">
+        <div class="brand-line">
+            <span></span>
+            <h1>DIAGNÓSTICO DE TIRO</h1>
+            <span></span>
+        </div>
+        <p>Análisis de distribución de impactos</p>
+    </header>
+
+    <!-- ========================= INICIO ========================= -->
+    <section id="homeView" class="view">
+        <div class="home-grid">
+
+            <button class="home-card" id="goDiagnostic" type="button">
+                <span class="home-card__icon">🎯</span>
+                <span class="home-card__body">
+                    <strong>Diagnóstico</strong>
+                    <small>
+                        Marque la totalidad de los disparos sobre la figura
+                        y obtenga un resumen de los errores predominantes.
+                    </small>
+                </span>
+                <span class="home-card__arrow">→</span>
+            </button>
+
+            <button class="home-card" id="goErrors" type="button">
+                <span class="home-card__icon">◎</span>
+                <span class="home-card__body">
+                    <strong>Errores de dispersión</strong>
+                    <small>
+                        Consulte los errores asociados a cada sector,
+                        incluyendo la correspondencia para tiradores zurdos.
+                    </small>
+                </span>
+                <span class="home-card__arrow">→</span>
+            </button>
+
+        </div>
+    </section>
+
+    <!-- ========================= ERRORES ========================= -->
+    <section id="errorsView" class="view" hidden>
+
+        <div class="page-heading">
+            <button class="back-button" type="button" data-back>← Volver</button>
+            <div>
+                <span class="eyebrow">MATERIAL DE CONSULTA</span>
+                <h2>Errores de dispersión</h2>
+            </div>
+        </div>
+
+        <div class="info-box">
+            <strong>Interpretación para tiradores zurdos</strong>
+            <p>
+                La rueda de referencia se invierte para la interpretación
+                diagnóstica del tirador zurdo.
+            </p>
+            <div class="mapping">
+                <span>1 ↔ 5</span>
+                <span>2 ↔ 8</span>
+                <span>3 ↔ 7</span>
+                <span>4 ↔ 6</span>
+            </div>
+        </div>
+
+        <div id="errorsList" class="errors-list"></div>
+
+    </section>
+
+    <!-- ========================= DIAGNÓSTICO ========================= -->
+    <section id="diagnosticView" class="view" hidden>
+
+        <div class="page-heading">
+            <button class="back-button" type="button" data-back>← Volver</button>
+            <div>
+                <span class="eyebrow">ANÁLISIS</span>
+                <h2>Diagnóstico de tiro</h2>
+            </div>
+        </div>
+
+        <section class="panel">
+            <span class="panel-label">TIPO DE TIRADOR</span>
+
+            <div class="hand-selector" role="group" aria-label="Tipo de tirador">
+                <button class="hand-button hand-button--active"
+                        data-hand="diestro" type="button">DIESTRO</button>
+                <button class="hand-button"
+                        data-hand="zurdo" type="button">ZURDO</button>
+            </div>
+        </section>
+
+        <section class="status-grid">
+            <div class="status-card">
+                <span>DISPAROS</span>
+                <strong id="contador">0</strong>
+            </div>
+
+            <div class="status-card">
+                <span>TIRADOR</span>
+                <strong id="manoActual">DIESTRO</strong>
+            </div>
+        </section>
+
+        <section class="target-wrap">
+            <div id="target" class="target" aria-label="Figura para registrar disparos">
+                <img
+                    src="assets/figura-tiro.jpeg"
+                    class="target__image"
+                    alt="Figura para diagnóstico de tiro"
+                    draggable="false">
+
+                <svg
+                    id="overlay"
+                    class="target__overlay"
+                    viewBox="0 0 1060 1484"
+                    preserveAspectRatio="none"
+                    aria-hidden="true">
+                </svg>
+            </div>
+        </section>
+
+        <p class="instruction">
+            <span>+</span>
+            Toque la figura en la ubicación de cada disparo
+        </p>
+
+        <section class="controls">
+            <button id="undoButton"
+                    class="control-button control-button--secondary"
+                    type="button" disabled>
+                ↶ Deshacer
+            </button>
+
+            <button id="clearButton"
+                    class="control-button control-button--danger"
+                    type="button" disabled>
+                × Limpiar
+            </button>
+
+            <button id="diagnosticButton"
+                    class="control-button control-button--primary"
+                    type="button" disabled>
+                Diagnóstico
+            </button>
+        </section>
+
+    </section>
+
+</main>
+
+<!-- ========================= MODAL RESULTADO ========================= -->
+<div id="resultModal" class="modal" hidden aria-hidden="true">
+    <div class="modal__backdrop" data-close-modal></div>
+
+    <section class="modal__sheet"
+             role="dialog"
+             aria-modal="true"
+             aria-labelledby="resultTitle">
+
+        <header class="modal__header">
+            <div>
+                <span>RESULTADO DEL ANÁLISIS</span>
+                <h2 id="resultTitle">Diagnóstico</h2>
+            </div>
+
+            <button id="closeResult"
+                    class="modal__close"
+                    type="button"
+                    aria-label="Cerrar">
+                ×
+            </button>
+        </header>
+
+        <div class="modal__content">
+
+            <div class="summary-grid">
+                <div class="summary-card">
+                    <span>DISPAROS</span>
+                    <strong id="resultTotal">0</strong>
+                </div>
+
+                <div class="summary-card">
+                    <span>SECTOR PRINCIPAL</span>
+                    <strong id="resultPrincipal">—</strong>
+                </div>
+
+                <div class="summary-card">
+                    <span>CONCENTRACIÓN</span>
+                    <strong id="resultPercentage">0%</strong>
+                </div>
+            </div>
+
+            <div class="result-block">
+                <h3>Distribución de los disparos</h3>
+                <div id="sectorResults" class="sector-results"></div>
+            </div>
+
+            <div class="result-block">
+                <h3>Errores predominantes</h3>
+                <div id="errorResults" class="error-results"></div>
+            </div>
+
+            <div class="result-block">
+                <h3>Resumen</h3>
+                <div id="diagnosticConclusion" class="conclusion"></div>
+            </div>
+
+        </div>
+    </section>
 </div>
 
-<svg viewBox="0 0 200 200" id="ruleta"></svg>
-
-<!-- MODAL -->
-<div class="modal" id="modal">
-  <div class="modal-content">
-    <span class="cerrar">&times;</span>
-    <h2 id="titulo"></h2>
-    <div id="contenido"></div>
-  </div>
-</div>
-
-<script src="./js/script.js"></script>
+<script src="script.js"></script>
 </body>
 </html>
