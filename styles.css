@@ -4,17 +4,18 @@
 ========================================================= */
 
 :root {
-    --primary: #202a34;
-    --primary-2: #344454;
-    --background: #eef1f3;
+    --primary: #b49a63;
+    --primary-2: #8f784b;
+    --background: #f3efe6;
     --surface: #ffffff;
-    --border: #cbd2d8;
-    --text: #1e2730;
-    --muted: #65727e;
-    --accent: #c87522;
+    --border: #d7ccb4;
+    --text: #27241f;
+    --muted: #746d60;
+    --accent: #9a7c42;
     --danger: #a33737;
     --danger-bg: #f7e8e8;
-    --shadow: 0 8px 24px rgba(20, 30, 40, .07);
+    --dark: #27241f;
+    --shadow: 0 8px 24px rgba(80, 65, 35, .08);
 }
 
 * {
@@ -762,3 +763,213 @@ button {
         max-width: 680px;
     }
 }
+
+
+/* ================= INSTRUCCIÓN SOBRE LA FIGURA ================= */
+
+.target-instruction {
+    width: 100%;
+    max-width: 650px;
+    margin: 16px auto 10px;
+    padding: 13px 15px;
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--primary);
+    border-radius: 10px;
+    background: #fff;
+    box-shadow: 0 5px 16px rgba(80, 65, 35, .06);
+}
+
+.target-instruction__icon {
+    width: 32px;
+    height: 32px;
+    flex: 0 0 32px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: var(--primary);
+    color: #fff;
+    font-size: 20px;
+    font-weight: 800;
+}
+
+.target-instruction__body {
+    min-width: 0;
+}
+
+.target-instruction strong {
+    display: block;
+    color: var(--dark);
+    font-size: 15px;
+    line-height: 1.2;
+}
+
+.target-instruction small {
+    display: block;
+    margin-top: 3px;
+    color: var(--muted);
+    font-size: 11px;
+    line-height: 1.35;
+}
+
+/* ================= TIPO DE TIRADOR MÁS VISIBLE ================= */
+
+.panel {
+    border-top: 4px solid var(--primary);
+}
+
+.panel-label {
+    margin-bottom: 13px;
+    color: var(--dark);
+    font-size: 14px;
+    letter-spacing: 2px;
+    font-weight: 900;
+}
+
+.hand-selector {
+    max-width: 470px;
+}
+
+.hand-button {
+    min-height: 52px;
+    font-size: 14px;
+    transition: background .18s ease, color .18s ease;
+}
+
+.hand-button--active {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: #fff;
+}
+
+/* El texto inferior queda más discreto */
+.instruction {
+    padding-top: 8px;
+    padding-bottom: 10px;
+    color: var(--muted);
+    font-size: 11px;
+}
+
+
+/* ================= GUÍA DE SECTORES ================= */
+
+.sector-toggle-wrap {
+    display: flex;
+    justify-content: center;
+    padding: 8px 0 2px;
+}
+
+.sector-toggle {
+    min-height: 42px;
+    padding: 0 18px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border: 1px solid var(--primary);
+    border-radius: 9px;
+    background: #fff;
+    color: var(--primary-2);
+    font-size: 12px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: background .18s ease, color .18s ease, transform .18s ease;
+}
+
+.sector-toggle:active {
+    transform: scale(.98);
+}
+
+.sector-toggle[aria-pressed="true"] {
+    background: var(--primary);
+    color: #fff;
+}
+
+.sector-toggle__icon {
+    font-size: 14px;
+    line-height: 1;
+}
+
+.sector-guide {
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity .18s ease;
+}
+
+.sector-guide.is-visible {
+    opacity: 1;
+    visibility: visible;
+}
+
+.sector-guide__wedge {
+    fill: #b49a63;
+    fill-opacity: .18;
+    stroke: #66583e;
+    stroke-width: 3;
+    stroke-opacity: .72;
+}
+
+.sector-guide__center {
+    fill: #fff;
+    fill-opacity: .86;
+    stroke: #4d4434;
+    stroke-width: 4;
+}
+
+.sector-guide__label {
+    fill: #8f5f1f;
+    font-size: 48px;
+    font-weight: 900;
+    text-anchor: middle;
+    dominant-baseline: middle;
+    paint-order: stroke;
+    stroke: rgba(255,255,255,.55);
+    stroke-width: 2px;
+}
+
+.sector-guide__hint {
+    fill: #5f5545;
+    font-size: 20px;
+    font-weight: 800;
+    text-anchor: middle;
+    dominant-baseline: middle;
+}
+
+@media (min-width: 600px) {
+    .sector-toggle {
+        min-height: 44px;
+        font-size: 13px;
+    }
+}
+
+.control-button--new {
+    grid-column: 1 / -1;
+    background: #f5f0e5;
+    border: 1px solid var(--primary);
+    color: var(--primary-2);
+}
+
+@media (min-width: 600px) {
+    .controls {
+        grid-template-columns: 1fr 1fr 1fr 1.5fr;
+    }
+
+    .control-button--new,
+    .control-button--primary {
+        grid-column: auto;
+    }
+}
+
+.control-button--report{grid-column:1/-1;background:#eee7d7;border:1px solid var(--primary);color:var(--primary-2)}
+.edit-panel{margin-top:10px;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;gap:12px;border:1px solid var(--border);border-radius:10px;background:#fff}
+.edit-panel strong{display:block;font-size:13px}.edit-panel small{display:block;margin-top:3px;color:var(--muted);font-size:10px;line-height:1.35}
+.edit-panel button{min-height:40px;padding:0 12px;border:1px solid var(--primary);border-radius:8px;background:var(--primary);color:#fff;font-size:11px;font-weight:800}
+.target.is-editing{cursor:move}.impact-circle.is-selected{fill:#7d4e1d;stroke:#fff;stroke-width:6}
+.impact-hit-area{fill:transparent;stroke:transparent;pointer-events:all;cursor:grab}
+.report-data-sheet{max-width:560px}.report-form{padding:18px}.report-question{margin:0 0 14px;font-size:14px;line-height:1.5}
+.report-choice{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}.report-choice button{min-height:44px;border:1px solid var(--border);border-radius:8px;background:#fff;font-size:12px;font-weight:800}.report-choice button.is-selected{background:var(--primary);color:#fff;border-color:var(--primary)}
+.personal-fields{display:grid;gap:11px;margin-bottom:15px}.personal-fields[hidden]{display:none}.personal-fields label{display:grid;gap:6px;color:var(--muted);font-size:11px;font-weight:800}.personal-fields input{min-height:46px;padding:0 12px;border:1px solid var(--border);border-radius:8px;outline:none}
+.report-confirm{width:100%;min-height:48px;border:1px solid var(--primary);border-radius:9px;background:var(--primary);color:#fff;font-weight:900}
+@media (min-width:600px){.controls{grid-template-columns:1fr 1fr 1fr 1.2fr 1.2fr}.control-button--report{grid-column:auto}}

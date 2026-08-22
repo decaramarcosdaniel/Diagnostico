@@ -115,6 +115,14 @@
             </div>
         </section>
 
+        <div class="target-instruction">
+            <span class="target-instruction__icon">+</span>
+            <div>
+                <strong>Marque en la figura los impactos</strong>
+                <small>Toque sobre la ubicación de cada disparo realizado</small>
+            </div>
+        </div>
+
         <section class="target-wrap">
             <div id="target" class="target" aria-label="Figura para registrar disparos">
                 <img
@@ -133,12 +141,27 @@
             </div>
         </section>
 
+        <div class="sector-toggle-wrap">
+            <button id="toggleSectors"
+                    class="sector-toggle"
+                    type="button"
+                    aria-pressed="false">
+                <span class="sector-toggle__icon">◉</span>
+                <span id="toggleSectorsText">Ver sectores</span>
+            </button>
+        </div>
+
         <p class="instruction">
-            <span>+</span>
-            Toque la figura en la ubicación de cada disparo
+            Los impactos se numeran automáticamente según el orden de registro.
         </p>
 
         <section class="controls">
+            <button id="newDiagnosticButton"
+                    class="control-button control-button--new"
+                    type="button">
+                + Nuevo diagnóstico
+            </button>
+
             <button id="undoButton"
                     class="control-button control-button--secondary"
                     type="button" disabled>
@@ -156,11 +179,48 @@
                     type="button" disabled>
                 Diagnóstico
             </button>
+
+            <button id="reportButton"
+                    class="control-button control-button--report"
+                    type="button" disabled>
+                ⤓ Generar informe
+            </button>
+        </section>
+
+        <section id="editPanel" class="edit-panel" hidden>
+            <div>
+                <strong>Modo edición</strong>
+                <small>Active la edición para mover un impacto a su ubicación correcta.</small>
+            </div>
+            <button id="editToggleButton" type="button">Editar impactos</button>
         </section>
 
     </section>
 
 </main>
+
+<!-- ========================= MODAL DATOS DEL INFORME ========================= -->
+<div id="reportDataModal" class="modal" hidden aria-hidden="true">
+    <div class="modal__backdrop" data-close-report-data></div>
+    <section class="modal__sheet report-data-sheet" role="dialog" aria-modal="true">
+        <header class="modal__header">
+            <div><span>GENERAR INFORME</span><h2>Datos del tirador</h2></div>
+            <button id="closeReportData" class="modal__close" type="button">×</button>
+        </header>
+        <div class="modal__content report-form">
+            <p class="report-question">¿Desea incorporar los datos personales del tirador en el informe?</p>
+            <div class="report-choice">
+                <button id="reportWithoutData" type="button">Sin datos</button>
+                <button id="reportWithData" type="button" class="is-selected">Incorporar datos</button>
+            </div>
+            <div id="reportPersonalFields" class="personal-fields">
+                <label>DNI<input id="reportDni" type="text" inputmode="numeric" maxlength="12" placeholder="Ingrese DNI"></label>
+                <label>Nombre y apellido<input id="reportName" type="text" maxlength="100" placeholder="Ingrese nombre y apellido"></label>
+            </div>
+            <button id="generateReportConfirm" class="report-confirm" type="button">Generar informe</button>
+        </div>
+    </section>
+</div>
 
 <!-- ========================= MODAL RESULTADO ========================= -->
 <div id="resultModal" class="modal" hidden aria-hidden="true">
